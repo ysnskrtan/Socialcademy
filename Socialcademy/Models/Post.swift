@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Post: Identifiable, Codable {
+struct Post: Identifiable, Equatable, Codable {
     var title: String
     var content: String
     var authorName: String
@@ -21,4 +21,12 @@ struct Post: Identifiable, Codable {
         let matches = properties.filter { $0.contains(query) }
         return !matches.isEmpty
     }
+}
+
+extension Post {
+    static let testPost = Post(
+        title: "Lorem ipsum",
+        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        authorName: "Jamie Harris"
+    )
 }
