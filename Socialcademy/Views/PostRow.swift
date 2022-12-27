@@ -57,6 +57,7 @@ struct PostRow: View {
             }
         }
         .padding(.vertical)
+        .alert("Cannot Delete Post", error: $error)
     }
 }
 
