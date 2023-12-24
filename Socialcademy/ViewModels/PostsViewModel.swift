@@ -29,7 +29,7 @@ class PostsViewModel: ObservableObject {
     
     private let postsRepository: PostsRepositoryProtocol
     
-    init(filter: Filter = .all, postsRepository: PostsRepositoryProtocol = PostsRepository()) {
+    init(filter: Filter = .all, postsRepository: PostsRepositoryProtocol) {
         self.filter = filter
         self.postsRepository = postsRepository
     }
