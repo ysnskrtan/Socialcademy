@@ -33,16 +33,24 @@ struct PostsList: View {
                         message: "There aren’t any posts yet."
                     )
                 case let .loaded(posts):
-                    List(posts) { post in
-                        if searchText.isEmpty || post.contains(searchText) {
-                            PostRow(viewModel: viewModel.makePostRowViewModel(for: post))
+                    ScrollView {
+                        ForEach(posts) { post in
+                            if searchText.isEmpty || post.contains(searchText) {
+                                PostRow(viewModel: viewModel.makePostRowViewModel(for: post))
+                            }
                         }
+                        .searchable(text: $searchText)
+                        .animation(.default, value: posts)
                     }
-                    .searchable(text: $searchText)
-                    .animation(.default, value: posts)
                 }
             }
             .navigationTitle(viewModel.title)
+            .onAppear {
+                viewModel.fetchPosts()
+            }
+            .sheet(isPresented: $showNewPostForm) {
+                NewPostForm(viewModel: viewModel.makeNewPostViewModel())
+            }
             .toolbar {
                 Button {
                     showNewPostForm = true
@@ -50,12 +58,18 @@ struct PostsList: View {
                     Label("New Post", systemImage: "square.and.pencil")
                 }
             }
-            .sheet(isPresented: $showNewPostForm) {
-                NewPostForm(createAction: viewModel.makeCreateAction())
-            }
         }
-        .onAppear {
-            viewModel.fetchPosts()
+    }
+}
+
+extension PostsList {
+    struct RootView: View {
+        @StateObject var viewModel: PostsViewModel
+        
+        var body: some View {
+            NavigationView {
+                PostsList(viewModel: viewModel)
+            }
         }
     }
 }
@@ -76,7 +90,10 @@ struct PostsList_Previews: PreviewProvider {
         var body: some View {
             let postsRepository = PostsRepositoryStub(state: state)
             let viewModel = PostsViewModel(postsRepository: postsRepository)
-            PostsList(viewModel: viewModel)
+            NavigationView {
+                PostsList(viewModel: viewModel)
+                    .environmentObject(ViewModelFactory.preview)
+            }
         }
     }
 }
